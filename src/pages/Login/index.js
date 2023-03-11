@@ -6,8 +6,8 @@ import {useStore} from '@/store'
 import {useNavigate} from 'react-router-dom'
 function Login(){
   //注册loginStore实例
-  const {loginStore} = useStore()
 
+  const {loginStore} = useStore()
   //路由跳转
   const navigate = useNavigate()
 
@@ -33,7 +33,7 @@ function Login(){
       <Card className="login-container">
         <img className="login-logo" src={logo} alt="" />
         {/* 登录表单 */}
-        {/* 子项使用的事件需要在from中声明 */}
+        {/* 子项的事件(失焦和改变)需要在from中声明 */}
         <Form 
           validateTrigger={['onBlur', 'onChange']}
           initialValues={{

@@ -1,5 +1,5 @@
 //工具模块——封装axios
-//实例化 请求拦截器，响应拦截器
+//实例化axios，设置请求拦截器，响应拦截器
 import axios from 'axios'
 import {getToken,removeToken} from './token'
 import { history } from './history'

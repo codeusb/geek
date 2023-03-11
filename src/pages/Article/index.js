@@ -7,37 +7,46 @@ import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import img404 from '@/assets/error.png'
 import { useEffect,useState } from 'react'
 import {http} from '@/utils'
+import {useStore} from '@/store'
+import { observer } from 'mobx-react-lite'
 
 const { Option } = Select
 const { RangePicker } = DatePicker
 
 const Article = () => {
   const navigate = useNavigate()
+
+  //获取频道列表数据
+  const {channelStore} = useStore()
+  //console.log('33',channelStore.channelList);
   //频道列表管理——hook
   //useState管理数据
-  const [channeList,setChanneList] = useState([])
+  //const [channeList,setChanneList] = useState([])
   //useEffect网络请求(不可以直接在useEffect进行异步请求)
-  useEffect(()=>{
-    const loadChanneList = async ()=>{
-      const res = await http.get('/channels')
-      setChanneList(res.data.channels)
-    }
-    loadChanneList()
-  },[])
+  // useEffect(()=>{
+  //   const loadChanneList = async ()=>{
+  //     const res = await http.get('/channels')
+  //     setChanneList(res.data.channels)
+  //   }
+  //   loadChanneList()
+  // },[])
 
   //文章列表管理（统一管理数据）
   const [articleData,setArticleData]= useState({
     list:[],//文章列表
     count:0 //文章数量
   })
-  //文章参数管理
+
+  //文章列表参数管理
   const [params,setParams] = useState({
     page:1,
     pre_page:10
   })
+
   /*如果异步请求需要依赖一些数据的变化而重新执行（推荐写在内部）
   统一不抽离函数（异步请求函数）到外面，只要涉及到异步请求的函数，放在useEffect内部 
   */
+ //加载文章列表
   useEffect(()=>{
     const loadList = async ()=>{
       const res = await http.get('/mp/articles', { params })
@@ -72,6 +81,7 @@ const Article = () => {
       ..._params
     })
   }
+
   //分页功能
   const pageChange = (page)=>{
     setParams({
@@ -79,6 +89,7 @@ const Article = () => {
       page
     })
   }
+
   //删除功能
   const delArticle = async (data)=>{
     //console.log(data);
@@ -90,10 +101,12 @@ const Article = () => {
       per_page: 10
     })
   }
+
   //编辑跳转功能
   const goPublish = (data)=>{
     navigate(`/publish?id=${data.id}`)
   }
+  
   // 文章列表的表头
   const columns = [
     {
@@ -163,31 +176,38 @@ const Article = () => {
     }
   ]
   // 文章列表数据（初始模拟）
-  const data = [
-    {
-        id: '8218',
-        comment_count: 0,
-        cover: {
-          images:['http://geek.itheima.net/resources/images/15.jpg'],
-        },
-        like_count: 0,
-        pubdate: '2019-03-11 09:00:00',
-        read_count: 2,
-        status: 2,
-        title: 'wkwebview离线化加载h5资源解决方案' 
-    }
-  ]
+  // const data = [
+  //   {
+  //       id: '8218',
+  //       comment_count: 0,
+  //       cover: {
+  //         images:['http://geek.itheima.net/resources/images/15.jpg'],
+  //       },
+  //       like_count: 0,
+  //       pubdate: '2019-03-11 09:00:00',
+  //       read_count: 2,
+  //       status: 2,
+  //       title: 'wkwebview离线化加载h5资源解决方案' 
+  //   }
+  // ]
   return (
     <div>
       {/* 筛选区域 */}
       <Card
         title={
           <Breadcrumb separator=">"
+            items={[
+              {
+                title:<Link to='/'>首页</Link>
+              },
+              {
+                title:'内容管理'
+              },
+            ]}
           >
-            <Breadcrumb.Item>
-              <Link to="/">首页</Link>
+            {/* <Breadcrumb.Item>
             </Breadcrumb.Item>
-            <Breadcrumb.Item>内容管理</Breadcrumb.Item>
+            <Breadcrumb.Item>内容管理</Breadcrumb.Item> */}
           </Breadcrumb>
         }
         style={{ marginBottom: 20 }}
@@ -209,7 +229,9 @@ const Article = () => {
               placeholder="请选择文章频道"
               style={{ width: 120 }}
             >
-              {channeList.map(item=><Option key={item.id} value={item.id}>{item.name}</Option>)}       
+              {channelStore.channelList.map(
+                item=><Option key={item.id} value={item.id}>{item.name}
+                </Option>)}       
               {/* <Option value="lucy">Lucy</Option> */}
             </Select>
           </Form.Item>
@@ -244,4 +266,4 @@ const Article = () => {
   )
 }
 
-export default Article
+export default observer(Article) 

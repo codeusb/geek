@@ -1,6 +1,10 @@
+import {Card} from 'antd'
+
 function Other () { 
   return(
-    <div>五子棋</div>
+    <Card>
+      五子棋
+    </Card>
   )
 }
 

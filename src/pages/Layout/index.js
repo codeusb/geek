@@ -16,14 +16,22 @@ import { observer } from 'mobx-react-lite'
 const { Header, Sider } = Layout
 
 const GeekLayout = () => {
-
   const navigate = useNavigate()
   const {pathname} = useLocation()
-  const {userStore,loginStore} = useStore()
-  //副作用函数获取用户信息
-  useEffect(()=>{
-    userStore.getUserInfo()
-  },[userStore])
+  const {userStore,loginStore,channelStore} = useStore()
+
+  //副作用函数获取用户信息和频道列表数据（频道在这里加载是因为article和publish都要用到该数据）
+  // useEffect(()=>{
+  //   userStore.getUserInfo()
+  //   channelStore.loadChannelList()
+  // },[userStore,channelStore])
+  useEffect(() => {
+    try {
+      userStore.getUserInfo()
+      channelStore.loadChannelList()
+      //console.log('22',channelStore.ChannelList);
+    } catch { }
+  }, [userStore,channelStore])
 
   //确定退出
   const onConfirm = ()=>{

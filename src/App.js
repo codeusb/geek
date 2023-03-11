@@ -16,7 +16,7 @@ function App() {
       <div className="App">
         <Routes>
           {/* 首页一级路由 */}
-          {/* layout需要鉴权处理 */}
+          {/* layout需要路由鉴权处理 */}
           <Route path='/' element={<AuthRoute><Layout/></AuthRoute>}>
             <Route index element={<Home/>}></Route>
             <Route path='article' element={<Article/>}></Route>
