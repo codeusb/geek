@@ -6,6 +6,7 @@ import '@/App.scss'
 import Home from './pages/Home'
 import Article from './pages/Article'
 import Publish from './pages/Publish'
+import Other from './pages/Other'
 import { HistoryRouter, history } from './utils/history'
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
             <Route index element={<Home/>}></Route>
             <Route path='article' element={<Article/>}></Route>
             <Route path='publish' element={<Publish/>}></Route>
+            <Route path='other' element={<Other/>}></Route>
           </Route>
           {/* 登录一级路由 */}
           <Route path='/login' element={<Login/>}></Route>

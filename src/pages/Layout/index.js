@@ -4,7 +4,8 @@ import {
   HomeOutlined,
   DiffOutlined,
   EditOutlined,
-  LogoutOutlined
+  LogoutOutlined,
+  BarsOutlined 
 } from '@ant-design/icons'
 import './index.scss'
 import {Outlet,useNavigate,useLocation} from 'react-router-dom'
@@ -73,7 +74,14 @@ const GeekLayout = () => {
                   icon: <EditOutlined />,
                   label: '发布文章',
                   onClick:()=>{navigate('/publish')}
-              },]}
+              },
+              {
+                key: '/other',
+                icon: <BarsOutlined />,
+                label: '其他功能',
+                onClick:()=>{navigate('/other')}
+            },
+            ]}
           >
           </Menu>
         </Sider>
