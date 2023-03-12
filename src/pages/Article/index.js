@@ -16,7 +16,7 @@ const { RangePicker } = DatePicker
 const Article = () => {
   const navigate = useNavigate()
 
-  //获取频道列表数据
+  //频道列表数据（获取）
   const {channelStore} = useStore()
   //console.log('33',channelStore.channelList);
   //频道列表管理——hook
@@ -46,7 +46,7 @@ const Article = () => {
   /*如果异步请求需要依赖一些数据的变化而重新执行（推荐写在内部）
   统一不抽离函数（异步请求函数）到外面，只要涉及到异步请求的函数，放在useEffect内部 
   */
- //加载文章列表
+  //加载文章列表
   useEffect(()=>{
     const loadList = async ()=>{
       const res = await http.get('/mp/articles', { params })
@@ -175,7 +175,7 @@ const Article = () => {
       }
     }
   ]
-  // 文章列表数据（初始模拟）
+  // 文章列表数据（初始模拟接口返回数据）
   // const data = [
   //   {
   //       id: '8218',
@@ -230,7 +230,9 @@ const Article = () => {
               style={{ width: 120 }}
             >
               {channelStore.channelList.map(
-                item=><Option key={item.id} value={item.id}>{item.name}
+                item=>
+                <Option key={item.id} value={item.id}>
+                  {item.name}
                 </Option>)}       
               {/* <Option value="lucy">Lucy</Option> */}
             </Select>

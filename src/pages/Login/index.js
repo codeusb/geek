@@ -6,8 +6,8 @@ import {useStore} from '@/store'
 import {useNavigate} from 'react-router-dom'
 function Login(){
   //注册loginStore实例
-
   const {loginStore} = useStore()
+  
   //路由跳转
   const navigate = useNavigate()
 

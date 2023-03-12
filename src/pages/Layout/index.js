@@ -5,7 +5,8 @@ import {
   DiffOutlined,
   EditOutlined,
   LogoutOutlined,
-  BarsOutlined 
+  BarsOutlined,
+  NumberOutlined
 } from '@ant-design/icons'
 import './index.scss'
 import {Outlet,useNavigate,useLocation} from 'react-router-dom'
@@ -17,7 +18,11 @@ const { Header, Sider } = Layout
 
 const GeekLayout = () => {
   const navigate = useNavigate()
+  // const location = useLocation()
+  // // 这里是当前浏览器上的路径地址
+  // const selectedKey = location.pathname
   const {pathname} = useLocation()
+  //console.log(pathname);
   const {userStore,loginStore,channelStore} = useStore()
 
   //副作用函数获取用户信息和频道列表数据（频道在这里加载是因为article和publish都要用到该数据）
@@ -68,7 +73,7 @@ const GeekLayout = () => {
               {
                   key: '/',
                   icon: <HomeOutlined />,
-                  label: `数据概览`,
+                  label: '数据概览',
                   onClick:()=>{navigate('/')}
               },
               {
@@ -84,10 +89,16 @@ const GeekLayout = () => {
                   onClick:()=>{navigate('/publish')}
               },
               {
-                key: '/other',
+                key: '/otherBtn',
                 icon: <BarsOutlined />,
                 label: '其他功能',
-                onClick:()=>{navigate('/other')}
+                // onClick:()=>{navigate('/other')},
+                children:[{
+                  key: '/other',
+                  icon: <NumberOutlined />,
+                  label: '五子棋',
+                  onClick:()=>{navigate('/other')},
+              },]
             },
             ]}
           >

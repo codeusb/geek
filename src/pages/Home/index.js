@@ -1,9 +1,8 @@
 import './index.scss'
 //思路：看文档使用echart
 //1.先跑最基础的demo  
-  //react获取dom对象 -> useRef
-  //在哪里获取dom节点 -> useEffect(dom渲染完成后执行)
-
+  //1.1react获取dom对象 -> useRef
+  //1.2在哪里获取dom节点 -> useEffect(dom渲染完成后执行)
 import Bar from '@/components/Bar'  
 import {Card} from 'antd'
 

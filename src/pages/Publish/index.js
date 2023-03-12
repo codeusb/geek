@@ -1,18 +1,19 @@
 import { Card, Breadcrumb, Form, Button,
-  Radio, Input, Upload, Space, Select } from 'antd'
+  Radio, Input, Upload, Space, Select,message } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import './index.scss'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
 import {useStore} from '@/store'
 import { observer } from 'mobx-react-lite'
-import {useRef, useState} from 'react'
+import {useEffect, useRef, useState} from 'react'
 import {http} from '@/utils'
 
 const { Option } = Select
 
 const Publish = () => {
+  const navigate = useNavigate()
   //频道列表数据渲染
   const {channelStore} = useStore()
 
@@ -24,6 +25,7 @@ const Publish = () => {
   const onUploadChange = info => {
     //console.log(info);
     const fileList = info.fileList.map(file => {
+      //上传完毕
       if (file.response) {
         return {
           url: file.response.data.url
@@ -37,7 +39,6 @@ const Publish = () => {
     //上传完成同时把图片列表存入仓库
     cacheImgList.current = fileList
   }
-
 
   //切换图片上传模式
   const [imgCount,setImgCount] = useState(1)
@@ -55,7 +56,7 @@ const Publish = () => {
     }
   }
 
-  //表单提交
+  //表单提交(发布文章)/更新文章
   const onFinish = async (values)=>{
     // console.log(values);
     //数据二次处理，处理图片的cover字段
@@ -70,9 +71,52 @@ const Publish = () => {
         images:fileList.map(item => item.url)
       }
     }
-    console.log(params);
-    await http.post('/mp/articles?draft=false', params)
+    //console.log(params);
+    if(id){
+      await http.put(`/mp/articles/${id}?draft=false`,params)
+    }else{
+      await http.post('/mp/articles?draft=false', params)
+    }
+    //跳转到文章页    
+    navigate('/article')
+    message.success(`${id?'更新成功':'发布成功'}`)
   }
+
+  //编辑功能
+  //文案适配
+  const [params] = useSearchParams()
+  const id = params.get('id')
+  //console.log(id);
+
+  //数据回填 id调用接口 1.表单回调 2.暂存列表 3.upload组件的filelist
+  const from = useRef()
+  useEffect(()=>{
+    const loadDetail = async ()=>{
+      const res = await http.get(`/mp/articles/${id}`)
+      // console.log(res);
+      const { cover, ...formValue } = res.data
+      //表单数据回填
+      from.current.setFieldsValue({ ...formValue, type: cover.type })
+      //调用setFileList方法回填upload
+      const imageList = cover.images.map(url => ({ url }))//es6对象简写
+      setFileList(imageList)
+      //暂存列表
+      cacheImgList.current = imageList
+    }
+    //必须编辑状态才能发送接口请求
+    if(id){
+      loadDetail()
+      // console.log(from.current);
+    }else{
+      //清理form回填数据
+      from.current.resetFields()
+      //清理uoload
+      setFileList([])
+      cacheImgList.current=[]
+    }
+    
+  },[id])
+
   return (
     <div className="publish">
       <Card
@@ -84,7 +128,7 @@ const Publish = () => {
               title:<Link to='/'>首页</Link>
             },
             {
-              title:'发布文章'
+              title:`${id?'编辑':'发布'}文章`
             },
           ]}
           >
@@ -100,6 +144,7 @@ const Publish = () => {
           wrapperCol={{ span: 16 }}
           initialValues={{ type: 1 }}
           onFinish={onFinish}
+          ref={from}
           // initialValues={{ type: 1,content:'this is content' }}
         >
           <Form.Item
@@ -132,23 +177,22 @@ const Publish = () => {
             </Form.Item>
             {imgCount>0 &&(
               <Upload
-              name="image"
-              listType="picture-card"
-              className="avatar-uploader"
-              showUploadList
-              action="http://geek.itheima.net/v1_0/upload"
-              fileList={fileList}
-              onChange={onUploadChange}
-              maxCount={imgCount}
-              multiple={imgCount > 1}
-              // progress={{strokeWidth: 3, showInfo: false}}
-            >
-              <div style={{ marginTop: 8 }}>
-                <PlusOutlined />
-              </div>
+                name="image"
+                listType="picture-card"
+                className="avatar-uploader"
+                showUploadList
+                action="http://geek.itheima.net/v1_0/upload"
+                fileList={fileList}
+                onChange={onUploadChange}
+                maxCount={imgCount}
+                multiple={imgCount > 1}
+                // progress={{strokeWidth: 3, showInfo: false}}
+              >
+                <div style={{ marginTop: 8 }}>
+                  <PlusOutlined />
+                </div>
             </Upload>
             )}
-            
           </Form.Item>
           {/* 富文本编辑器的输入内容会在onFinshed事件回调中被获取 */}
           <Form.Item
@@ -166,7 +210,7 @@ const Publish = () => {
           <Form.Item wrapperCol={{ offset: 4 }}>
             <Space>
               <Button size="large" type="primary" htmlType="submit">
-                发布文章
+                {id?'更新':'发布'}文章
               </Button>
             </Space>
           </Form.Item>
